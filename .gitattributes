@@ -1,0 +1,2 @@
+# Preserve the generated viewer bytes; whitespace is controlled by its generator.
+architecture/*.html -whitespace linguist-generated=true

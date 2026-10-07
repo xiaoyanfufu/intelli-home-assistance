@@ -1,5 +1,6 @@
 # Private notes and local tooling
 docs/
+OPEN_SOURCE_PLAN.md
 .archify/
 .local/
 architecture/*.delivery.json

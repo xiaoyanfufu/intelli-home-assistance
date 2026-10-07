@@ -1,0 +1,422 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Intelli Home · 系统架构",
+    "locale": "zh-CN",
+    "output": "architecture/intelli-home.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "mqtt",
+      "type": "external",
+      "label": "MQTT 接入 · adapter/in",
+      "sublabel": "EMQX → 连接组件 + 解析器",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "entry",
+      "type": "backend",
+      "label": "DeviceEventHandler",
+      "sublabel": "application/port/in · 统一事件入口",
+      "pos": [
+        40,
+        240
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "mock",
+      "type": "external",
+      "label": "HTTP / Mock · adapter/in",
+      "sublabel": "Controller → 构造 DeviceEvent",
+      "pos": [
+        40,
+        440
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "dispatch",
+      "type": "backend",
+      "label": "DeviceEventDispatcher",
+      "sublabel": "application/service · 校验与业务编排",
+      "pos": [
+        420,
+        240
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "rules",
+      "type": "backend",
+      "label": "领域规则",
+      "sublabel": "火灾 / 离线；收衣用例独立执行",
+      "pos": [
+        420,
+        40
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "state",
+      "type": "database",
+      "label": "Redis 状态 · adapter/out",
+      "sublabel": "DeviceStateStore · 拒绝旧数据",
+      "pos": [
+        800,
+        240
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "MySQL · MyBatis",
+      "sublabel": "台账 / 历史 / 告警 / Outbox / 收据",
+      "pos": [
+        420,
+        440
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "publisher",
+      "type": "backend",
+      "label": "OutboxPublisher · adapter/out",
+      "sublabel": "每 3 秒读取待发布记录",
+      "pos": [
+        420,
+        640
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "rabbit",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "持久队列 · 重试耗尽 → 死信",
+      "pos": [
+        800,
+        640
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "notify",
+      "type": "backend",
+      "label": "消费与通知事务",
+      "sublabel": "收据去重 · 提交后手动 ACK",
+      "pos": [
+        800,
+        440
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "request",
+      "type": "external",
+      "label": "HTTP 建议请求 · adapter/in",
+      "sublabel": "用户显式调用 recommendation",
+      "pos": [
+        40,
+        850
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "recommend",
+      "type": "backend",
+      "label": "RecommendationService",
+      "sublabel": "新鲜状态 + 安全检查 · application",
+      "pos": [
+        420,
+        850
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "gateway",
+      "type": "backend",
+      "label": "HttpAgentGateway · adapter/out",
+      "sublabel": "实现 AgentGateway 接口",
+      "pos": [
+        800,
+        850
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "python",
+      "type": "backend",
+      "label": "Python · FastAPI / LangGraph",
+      "sublabel": "建议 / 日报 / 结构化天气",
+      "pos": [
+        800,
+        1050
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "daily",
+      "type": "backend",
+      "label": "独立日报调度",
+      "sublabel": "Java 聚合状态 / 历史 / 告警",
+      "pos": [
+        420,
+        1050
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "daily-trigger",
+      "type": "external",
+      "label": "日报定时 / 手动入口",
+      "sublabel": "默认关闭 · dryRun 可预览",
+      "pos": [
+        40,
+        1050
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "daily-delivery",
+      "type": "backend",
+      "label": "Java 日报投递",
+      "sublabel": "SMTP + MySQL 收据 · 不经 MQ",
+      "pos": [
+        420,
+        1250
+      ],
+      "size": [
+        240,
+        76
+      ]
+    },
+    {
+      "id": "providers",
+      "type": "external",
+      "label": "天气供应商 / 可选 LLM",
+      "sublabel": "缺失或异常时明确降级",
+      "pos": [
+        800,
+        1250
+      ],
+      "size": [
+        240,
+        76
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "mqtt-entry",
+      "from": "mqtt",
+      "to": "entry",
+      "label": "统一事件",
+      "variant": "default"
+    },
+    {
+      "id": "mock-entry",
+      "from": "mock",
+      "to": "entry",
+      "label": "统一事件",
+      "variant": "default"
+    },
+    {
+      "id": "entry-dispatch",
+      "from": "entry",
+      "to": "dispatch",
+      "label": "handle(event)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "dispatch-rule",
+      "from": "dispatch",
+      "to": "rules",
+      "label": "调用规则",
+      "variant": "default"
+    },
+    {
+      "id": "dispatch-state",
+      "from": "dispatch",
+      "to": "state",
+      "label": "更新 / 读取",
+      "variant": "default"
+    },
+    {
+      "id": "dispatch-db",
+      "from": "dispatch",
+      "to": "db",
+      "label": "接口委托写入",
+      "variant": "default"
+    },
+    {
+      "id": "db-publisher",
+      "from": "publisher",
+      "to": "db",
+      "label": "轮询待投递",
+      "variant": "dashed"
+    },
+    {
+      "id": "publisher-rabbit",
+      "from": "publisher",
+      "to": "rabbit",
+      "label": "发布 + confirm",
+      "variant": "dashed"
+    },
+    {
+      "id": "rabbit-notify",
+      "from": "rabbit",
+      "to": "notify",
+      "label": "消费 / ACK",
+      "variant": "dashed"
+    },
+    {
+      "id": "request-service",
+      "from": "request",
+      "to": "recommend",
+      "label": "生成建议",
+      "variant": "emphasis"
+    },
+    {
+      "id": "service-gateway",
+      "from": "recommend",
+      "to": "gateway",
+      "label": "无安全告警时",
+      "variant": "default"
+    },
+    {
+      "id": "gateway-python",
+      "from": "gateway",
+      "to": "python",
+      "label": "HTTP / JSON",
+      "variant": "default"
+    },
+    {
+      "id": "daily-start",
+      "from": "daily-trigger",
+      "to": "daily",
+      "label": "窗口内尝试"
+    },
+    {
+      "id": "daily-agent",
+      "from": "daily",
+      "to": "python",
+      "label": "HTTP 日报"
+    },
+    {
+      "id": "daily-send",
+      "from": "daily",
+      "to": "daily-delivery",
+      "label": "成功后投递"
+    },
+    {
+      "id": "agent-providers",
+      "from": "python",
+      "to": "providers",
+      "label": "天气 / 可选模型"
+    },
+    {
+      "id": "notification-receipts",
+      "from": "notify",
+      "to": "db",
+      "label": "通知收据"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "进程与职责",
+      "items": [
+        "Java 图中组件属于一个后端进程，按 adapter → application → domain 分层；Python 为独立服务。",
+        "HTTP / Mock 与 MQTT 统一进入设备事件入口；安全判断由 Java 执行，遥测不自动调用模型。"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "家居扩展",
+      "items": [
+        "MySQL 保存遥测历史、页面版本、规则配置、晾晒任务与命令。SSE 读取已提交 change feed，独立于通知队列。",
+        "Java 使用结构化天气执行收衣规则；命令通过独立 MQTT 发布与回执处理，目前只允许模拟开关。"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "告警与日报",
+      "items": [
+        "告警与 Outbox 同事务持久化。发布检查 Broker confirm 与路由；通知收据事务提交后才 ACK。",
+        "通知默认日志，可启用 SMTP。日报使用独立调度线程，成功后直接投递并记录收据，不经告警 Outbox。"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "一致性边界",
+      "items": [
+        "Redis 与 MySQL 无统一事务；没有持久入站事件日志，不保证设备处理跨进程崩溃零丢失。",
+        "SMTP 接受后数据库提交失败可能重复发送。单家庭、单实例；无公网鉴权、真实硬件或前端渲染。"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "源码依据",
+      "items": [
+        "组件依据当前工作区源码核对，路径清单见 architecture/README.md。",
+        "服务改动尚未提交，因此此图没有绑定旧 HEAD；自动校验覆盖图结构、布局与浏览器，不包含提交级源码证明。"
+      ]
+    }
+  ]
+}
