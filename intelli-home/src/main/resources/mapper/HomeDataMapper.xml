@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.intelli.home.adapter.out.persistence.mapper.HomeDataMapper">
+  <insert id="insertModel">INSERT IGNORE INTO device_model(model_key,version,definition) VALUES(#{modelKey},#{version},#{definition})</insert>
+  <select id="model" resultType="string">SELECT definition FROM device_model WHERE model_key=#{modelKey} AND version=#{version}</select>
+  <insert id="register">INSERT IGNORE INTO home_device(device_key,display_name,model_key,model_version,source,location,created_at)
+    VALUES(#{deviceKey},#{displayName},#{modelKey},#{modelVersion},#{source},#{location},#{createdAt})</insert>
+  <select id="device" resultType="com.intelli.home.domain.home.HomeDevice">
+    SELECT device_key,display_name,model_key,model_version,source,location,created_at FROM home_device WHERE device_key=#{deviceKey}
+  </select>
+  <select id="devices" resultType="com.intelli.home.domain.home.HomeDevice">
+    SELECT device_key,display_name,model_key,model_version,source,location,created_at FROM home_device ORDER BY device_key
+  </select>
+  <insert id="insertTelemetry">INSERT IGNORE INTO device_telemetry(event_id,device_key,model_key,model_version,occurred_at,received_at,properties_json)
+    VALUES(#{sample.eventId},#{sample.deviceKey},#{sample.modelKey},#{sample.modelVersion},#{sample.occurredAt},#{sample.receivedAt},#{properties})</insert>
+  <select id="telemetry" resultType="map">
+    SELECT event_id,device_key,model_key,model_version,occurred_at,received_at,properties_json FROM device_telemetry
+    WHERE device_key=#{deviceKey} AND occurred_at &gt;= #{from} AND occurred_at &lt; #{to}
+      AND (occurred_at &gt; #{afterTime} OR (occurred_at=#{afterTime} AND event_id &gt; #{afterId}))
+    ORDER BY occurred_at,event_id LIMIT #{limit}
+  </select>
+  <delete id="cleanupTelemetry">DELETE FROM device_telemetry WHERE received_at &lt; #{before} LIMIT #{limit}</delete>
+  <insert id="insertChange">INSERT IGNORE INTO home_change_event(event_key,type,device_key,occurred_at,resource_version,payload)
+    VALUES(#{event.eventKey},#{event.type},#{event.deviceKey},#{event.occurredAt},#{event.resourceVersion},#{payload})</insert>
+  <select id="changes" resultType="map">
+    SELECT id,event_key,type,device_key,occurred_at,resource_version,payload FROM home_change_event WHERE id &gt; #{cursor} ORDER BY id LIMIT #{limit}
+  </select>
+  <select id="latestChange" resultType="long">SELECT COALESCE(MAX(id),0) FROM home_change_event</select>
+  <select id="earliestChange" resultType="long">SELECT COALESCE(MIN(id),0) FROM home_change_event</select>
+  <select id="lockChangeClock" resultType="int">SELECT id FROM home_change_clock WHERE id=1 FOR UPDATE</select>
+  <delete id="cleanupChanges">DELETE FROM home_change_event WHERE occurred_at &lt; #{before} LIMIT #{limit}</delete>
+</mapper>

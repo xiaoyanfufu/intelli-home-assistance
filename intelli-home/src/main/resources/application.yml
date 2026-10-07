@@ -1,0 +1,97 @@
+server:
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  port: ${SERVER_PORT:8080}
+spring:
+  application:
+    name: intelli-home
+  datasource:
+    url: jdbc:mysql://localhost:3306/intelli_home?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:intelli}
+    password: ${MYSQL_PASSWORD:intelli123}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 3000
+  sql:
+    init:
+      mode: never
+      schema-locations: classpath:db/schema.sql
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 3s
+  rabbitmq:
+    host: localhost
+    port: 5672
+    requested-heartbeat: ${RABBITMQ_HEARTBEAT:5s}
+    username: ${RABBITMQ_USER:intelli}
+    password: ${RABBITMQ_PASSWORD:intelli123}
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 10
+        default-requeue-rejected: false
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 500ms
+          max-interval: 2s
+          multiplier: 2
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+intelli:
+  migrations:
+    adopt-existing: ${ADOPT_EXISTING_SCHEMA:false}
+  extensions:
+    mock-controls: false
+    weather-mode: disabled
+  mock:
+    enabled: true
+  mqtt:
+    enabled: true
+    broker-url: tcp://localhost:1883
+    client-id: intelli-home-backend
+    username: ""
+    password: ""
+    subscribe-topics:
+      - home/+/+/event
+      - home/+/+/command-reply
+    qos: 1
+  agent:
+    enabled: ${AGENT_ENABLED:false}
+    base-url: ${AGENT_BASE_URL:http://localhost:8000}
+    timeout: 10s
+  notification:
+    channel: ${NOTIFY_CHANNEL:log}
+    email:
+      enabled: ${MAIL_ENABLED:false}
+      host: ${MAIL_HOST:}
+      port: ${MAIL_PORT:465}
+      security: ${MAIL_SECURITY:ssl}
+      username: ${MAIL_USERNAME:}
+      password: ${MAIL_PASSWORD:}
+      from: ${MAIL_FROM:}
+      to: ${MAIL_TO:}
+      subject-prefix: "[intelli-home]"
+      min-level: WARN
+      min-level-exempt-rule-codes: DAILY_DIGEST,MANUAL_EMAIL
+      timeout: 5s
+      debug: false
+    api:
+      enabled: ${MAIL_API_ENABLED:false}
+      max-body-length: 4000
+  daily-advice:
+    enabled: ${DAILY_ADVICE_ENABLED:false}
+    cron: ${DAILY_ADVICE_CRON:0 0/15 7-9 * * *}
+    zone: ${DAILY_ADVICE_ZONE:Asia/Shanghai}
+    history-hours: 24
+    max-devices: 20
+    max-samples-per-device: 20000
+    subject-prefix: "[intelli-home] 今日生活建议"
+logging:
+  level:
+    com.intelli.home: INFO

@@ -1,0 +1,5 @@
+# IntelliJ 启用 debug profile 时生效。断点仍应使用 Suspend: Thread。
+# 实际心跳由客户端和 Broker 协商；Broker 默认 60s，单端增大不能突破此上限。
+spring:
+  rabbitmq:
+    requested-heartbeat: 60s

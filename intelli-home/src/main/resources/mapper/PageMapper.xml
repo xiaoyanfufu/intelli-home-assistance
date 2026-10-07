@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.intelli.home.adapter.out.persistence.mapper.PageMapper">
+  <select id="find" resultType="map">SELECT id,revision,archived,updated_at,definition FROM dashboard_page WHERE id=#{id} AND owner='local'</select>
+  <select id="list" resultType="map">SELECT id,revision,archived,updated_at,definition FROM dashboard_page WHERE owner='local' ORDER BY updated_at DESC,id</select>
+  <insert id="create">INSERT INTO dashboard_page(id,owner,title,revision,definition,updated_at) VALUES(#{id},'local',#{title},1,#{definition},#{now})</insert>
+  <update id="replace">UPDATE dashboard_page SET title=#{title},revision=#{revision},definition=#{definition},archived=#{archived},updated_at=#{now}
+    WHERE id=#{id} AND owner='local' AND revision=#{expected}</update>
+  <insert id="recordRevision">INSERT INTO dashboard_page_revision(page_id,revision,definition,created_at) VALUES(#{id},#{revision},#{definition},#{now})</insert>
+  <select id="revision" resultType="string">SELECT r.definition FROM dashboard_page_revision r JOIN dashboard_page p ON p.id=r.page_id
+    WHERE p.owner='local' AND r.page_id=#{id} AND r.revision=#{revision}</select>
+  <select id="revisions" resultType="long">SELECT r.revision FROM dashboard_page_revision r JOIN dashboard_page p ON p.id=r.page_id
+    WHERE p.owner='local' AND r.page_id=#{id} ORDER BY r.revision DESC</select>
+</mapper>

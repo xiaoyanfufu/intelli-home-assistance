@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.intelli.home.adapter.out.persistence.mapper.LaundryMapper">
+  <sql id="fields">id,device_key,status,started_at,completed_at,risk_active,risk_cycle,version</sql>
+  <insert id="create">INSERT INTO laundry_session(id,device_key,status,started_at,risk_active,risk_cycle,version) VALUES(#{id},#{deviceKey},#{status},#{startedAt},FALSE,0,1)</insert>
+  <select id="list" resultType="com.intelli.home.domain.home.LaundrySession">SELECT <include refid="fields"/> FROM laundry_session ORDER BY started_at DESC,id</select>
+  <select id="lockActive" resultType="com.intelli.home.domain.home.LaundrySession">SELECT <include refid="fields"/> FROM laundry_session WHERE status='ACTIVE' ORDER BY id FOR UPDATE</select>
+  <select id="lock" resultType="com.intelli.home.domain.home.LaundrySession">SELECT <include refid="fields"/> FROM laundry_session WHERE id=#{id} FOR UPDATE</select>
+  <update id="update">UPDATE laundry_session SET status=#{session.status},completed_at=#{session.completedAt},
+    risk_active=#{session.riskActive},risk_cycle=#{session.riskCycle},version=#{session.version} WHERE id=#{session.id} AND version=#{expected}</update>
+  <select id="weather" resultType="com.intelli.home.domain.home.WeatherSnapshot">
+    SELECT location,source,observed_at,valid_until,available,raining,rain_probability,reason FROM weather_snapshot WHERE id=1
+  </select>
+  <insert id="saveWeather">INSERT INTO weather_snapshot(id,location,source,observed_at,valid_until,available,raining,rain_probability,reason)
+    VALUES(1,#{location},#{source},#{observedAt},#{validUntil},#{available},#{raining},#{rainProbability},#{reason})
+    ON DUPLICATE KEY UPDATE location=VALUES(location),source=VALUES(source),observed_at=VALUES(observed_at),valid_until=VALUES(valid_until),
+      available=VALUES(available),raining=VALUES(raining),rain_probability=VALUES(rain_probability),reason=VALUES(reason)</insert>
+</mapper>

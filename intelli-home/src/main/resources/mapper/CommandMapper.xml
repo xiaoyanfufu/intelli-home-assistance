@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.intelli.home.adapter.out.persistence.mapper.CommandMapper">
+  <sql id="fields">c.id,c.idempotency_key,c.device_key,c.action_code,c.parameters,c.requester,c.status,c.created_at,c.expires_at,c.result,c.late_result,c.version</sql>
+  <insert id="create">INSERT INTO device_command(id,idempotency_key,device_key,action_code,parameters,requester,status,created_at,expires_at)
+    VALUES(#{command.id},#{command.idempotencyKey},#{command.deviceKey},#{command.actionCode},#{parameters},#{command.requester},'PENDING',#{command.createdAt},#{command.expiresAt})</insert>
+  <insert id="enqueue">INSERT INTO command_outbox(command_id) VALUES(#{id})</insert>
+  <select id="find" resultType="map">SELECT <include refid="fields"/> FROM device_command c WHERE c.id=#{id}</select>
+  <select id="request" resultType="map">SELECT <include refid="fields"/> FROM device_command c WHERE c.device_key=#{deviceKey} AND c.idempotency_key=#{key}</select>
+  <select id="lock" resultType="map">SELECT <include refid="fields"/> FROM device_command c WHERE c.id=#{id} FOR UPDATE</select>
+  <select id="list" resultType="map">SELECT <include refid="fields"/> FROM device_command c WHERE c.device_key=#{deviceKey} ORDER BY created_at DESC LIMIT 100</select>
+  <select id="pending" resultType="map">SELECT <include refid="fields"/> FROM device_command c JOIN command_outbox o ON c.id=o.command_id
+    WHERE o.published=FALSE AND c.status IN ('PENDING','DISPATCHED') ORDER BY c.created_at LIMIT 50</select>
+  <select id="overdue" resultType="map">SELECT <include refid="fields"/> FROM device_command c
+    WHERE c.status IN ('PENDING','DISPATCHED') AND c.expires_at &lt;= #{now} LIMIT 50</select>
+  <update id="update">UPDATE device_command SET status=#{command.status},result=#{result},late_result=#{late},version=#{command.version}
+    WHERE id=#{command.id} AND version=#{expected}</update>
+  <update id="markPublished">UPDATE command_outbox SET published=TRUE,attempts=attempts+1,last_error=NULL WHERE command_id=#{id}</update>
+  <update id="failure">UPDATE command_outbox SET attempts=attempts+1,last_error=#{error} WHERE command_id=#{id}</update>
+  <insert id="mockInsert">INSERT IGNORE INTO mock_command_execution(command_id,device_key,result) VALUES(#{id},#{deviceKey},#{result})</insert>
+  <select id="mockResult" resultType="string">SELECT result FROM mock_command_execution WHERE command_id=#{id} AND device_key=#{deviceKey}</select>
+</mapper>

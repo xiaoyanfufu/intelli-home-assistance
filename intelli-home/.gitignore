@@ -1,0 +1,29 @@
+# ── Maven ───────────────────────────────────────────
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
+# ── IDE ─────────────────────────────────────────────
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# ── 日志与本地配置 ──────────────────────────────────
+*.log
+logs/
+# 本地覆盖配置不入库，避免把个人环境写进仓库
+src/main/resources/application-local.yml
+
+# ── 系统 ────────────────────────────────────────────
+.DS_Store
+Thumbs.db

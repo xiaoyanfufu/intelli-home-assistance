@@ -1,0 +1,1 @@
+ALTER TABLE home_device_snapshot ADD COLUMN version BIGINT NOT NULL DEFAULT 0;

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.intelli.home.adapter.out.persistence.mapper.NotificationReceiptMapper">
+  <insert id="claim">
+    INSERT IGNORE INTO notification_delivery(message_id) VALUES (#{messageId})
+  </insert>
+  <select id="exists" resultType="boolean">
+    SELECT EXISTS(SELECT 1 FROM notification_delivery WHERE message_id=#{messageId})
+  </select>
+</mapper>

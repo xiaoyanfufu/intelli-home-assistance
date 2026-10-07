@@ -1,0 +1,28 @@
+# Copy to application-local.yml and activate SPRING_PROFILES_ACTIVE=local.
+# This example never contains real credentials. Defaults remain disabled.
+intelli:
+  agent:
+    enabled: true
+    base-url: http://127.0.0.1:8000
+    timeout: 15s
+  notification:
+    channel: email
+    email:
+      enabled: false # set true after filling SMTP settings
+      host: ""
+      port: 465
+      security: ssl
+      username: ""
+      password: ""
+      from: ""
+      to: []
+      min-level: WARN
+      min-level-exempt-rule-codes: [DAILY_DIGEST, MANUAL_EMAIL]
+      timeout: 5s
+    api:
+      enabled: false
+  daily-advice:
+    enabled: false # set true after verifying email and Agent
+    cron: "0 0/15 7-9 * * *"
+    zone: Asia/Shanghai
+    history-hours: 24

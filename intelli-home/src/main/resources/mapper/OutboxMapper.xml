@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.intelli.home.adapter.out.persistence.mapper.OutboxMapper">
+  <resultMap id="outboxRow" type="com.intelli.home.adapter.out.persistence.model.OutboxRow">
+    <id column="message_id" property="messageId"/>
+    <result column="payload" property="payload"/>
+  </resultMap>
+  <insert id="insert">
+    INSERT INTO alert_outbox(message_id, payload) VALUES (#{messageId}, #{payload})
+  </insert>
+  <select id="findPending" resultMap="outboxRow">
+    SELECT message_id, payload FROM alert_outbox
+    WHERE published = FALSE ORDER BY created_at LIMIT #{limit}
+  </select>
+  <update id="markPublished">
+    UPDATE alert_outbox SET published = TRUE, attempts = attempts + 1, last_error = NULL
+    WHERE message_id = #{messageId}
+  </update>
+  <update id="recordFailure">
+    UPDATE alert_outbox SET attempts = attempts + 1, last_error = #{error}
+    WHERE message_id = #{messageId}
+  </update>
+</mapper>

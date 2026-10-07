@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.intelli.home.adapter.out.persistence.mapper.DeviceSnapshotMapper">
+  <resultMap id="snapshotRow" type="com.intelli.home.adapter.out.persistence.model.DeviceSnapshotRow">
+    <id column="device_key" property="deviceKey"/>
+    <result column="version" property="version"/>
+    <result column="location" property="location"/>
+    <result column="source" property="source"/>
+    <result column="event_id" property="eventId"/>
+    <result column="occurred_at" property="occurredAt"/>
+    <result column="last_seen_at" property="lastSeenAt"/>
+    <result column="properties_json" property="propertiesJson"/>
+    <result column="times_json" property="timesJson"/>
+  </resultMap>
+  <sql id="columns">device_key, location, source, event_id, occurred_at, last_seen_at, properties_json, times_json</sql>
+  <insert id="insertIfAbsent">
+    INSERT IGNORE INTO home_device_snapshot
+      (<include refid="columns"/>)
+    VALUES (#{deviceKey}, #{location}, #{source}, '', 0, 0, '{}', '{}')
+  </insert>
+  <select id="lockByDeviceKey" resultMap="snapshotRow">
+    SELECT <include refid="columns"/>, version FROM home_device_snapshot WHERE device_key = #{deviceKey} FOR UPDATE
+  </select>
+  <update id="update">
+    UPDATE home_device_snapshot
+    SET location = #{location}, source = #{source}, event_id = #{eventId},
+        occurred_at = #{occurredAt}, last_seen_at = #{lastSeenAt},
+        properties_json = #{propertiesJson}, times_json = #{timesJson}, version = version + 1
+    WHERE device_key = #{deviceKey}
+  </update>
+  <select id="findAll" resultMap="snapshotRow">
+    SELECT <include refid="columns"/>, version FROM home_device_snapshot
+  </select>
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.intelli.home.adapter.out.persistence.mapper.AlertMapper">
+  <resultMap id="alert" type="com.intelli.home.domain.alert.AlertEvent">
+    <id column="message_id" property="messageId"/>
+    <result column="device_key" property="deviceKey"/>
+    <result column="rule_code" property="ruleCode"/>
+    <result column="scene" property="scene"/>
+    <result column="level" property="level"/>
+    <result column="title" property="title"/>
+    <result column="content" property="content"/>
+    <result column="occurred_at" property="occurredAt"
+            typeHandler="com.intelli.home.adapter.out.persistence.typehandler.EpochMillisTimestampTypeHandler"/>
+  </resultMap>
+  <insert id="initializeCooldown">
+    INSERT IGNORE INTO alert_cooldown(device_key, rule_code, last_occurred_at)
+    VALUES (#{deviceKey}, #{ruleCode}, 0)
+  </insert>
+  <select id="lockCooldown" resultType="java.lang.Long">
+    SELECT last_occurred_at FROM alert_cooldown
+    WHERE device_key = #{deviceKey} AND rule_code = #{ruleCode} FOR UPDATE
+  </select>
+  <select id="exists" resultType="boolean">
+    SELECT EXISTS(SELECT 1 FROM alert_event WHERE message_id = #{messageId})
+  </select>
+  <insert id="insert">
+    INSERT INTO alert_event(message_id, device_key, rule_code, scene, level, title, content, occurred_at)
+    VALUES (#{messageId}, #{deviceKey}, #{ruleCode}, #{scene}, #{level}, #{title}, #{content},
+            #{occurredAt,typeHandler=com.intelli.home.adapter.out.persistence.typehandler.EpochMillisTimestampTypeHandler})
+  </insert>
+  <update id="updateCooldown">
+    UPDATE alert_cooldown SET last_occurred_at = #{occurredAt}
+    WHERE device_key = #{deviceKey} AND rule_code = #{ruleCode}
+  </update>
+  <select id="findRecent" resultMap="alert">
+    SELECT message_id, device_key, rule_code, scene, level, title, content, occurred_at
+    FROM alert_event ORDER BY id DESC LIMIT #{limit}
+  </select>
+</mapper>
