@@ -1,0 +1,33 @@
+# ── Python ──────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ── 虚拟环境（uv 建在 .venv）───────────────────────
+.venv/
+venv/
+ENV/
+
+# ── 密钥：绝不入库 ──────────────────────────────────
+.env
+.env.local
+*.key
+
+# ── 测试与工具缓存 ──────────────────────────────────
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# ── IDE / 系统 ──────────────────────────────────────
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
