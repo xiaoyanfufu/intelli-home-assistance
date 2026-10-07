@@ -1,0 +1,111 @@
+# intelli-home 本地开发中间件
+#
+# 用法（在 infra 目录下）：
+#   docker compose up -d            # 启动四件套
+#   docker compose ps               # 看健康状态
+#   docker compose logs -f mysql    # 排查单个服务
+#   docker compose down             # 停止（保留数据卷）
+#   docker compose down -v          # 停止并清空数据（谨慎）
+#
+# 账号密码仅供本地开发，端口只绑定回环地址。
+# 空数据库由 Java Flyway 初始化；mysql/init 保留旧版 SQL，不自动执行。
+
+name: intelli-home
+
+services:
+  # ── MySQL：设备、设备状态、告警事件、规则配置 ───────────────
+  mysql:
+    image: mysql:8.4
+    container_name: intelli-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: intelli123
+      MYSQL_DATABASE: intelli_home
+      MYSQL_USER: intelli
+      MYSQL_PASSWORD: intelli123
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+08:00
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pintelli123"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── Redis：设备最新状态缓存 ────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: intelli-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ── RabbitMQ：告警事件异步处理 ─────────────────────────────
+  # 管理台 http://localhost:15672  账号 intelli / intelli123
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: intelli-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: intelli
+      RABBITMQ_DEFAULT_PASS: intelli123
+      RABBITMQ_DEFAULT_VHOST: /
+      TZ: Asia/Shanghai
+    ports:
+      - "127.0.0.1:5672:5672"     # AMQP
+      - "127.0.0.1:15672:15672"   # 管理台
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # ── EMQX：MQTT Broker，设备接入 ────────────────────────────
+  # 控制台 http://localhost:18083  默认账号 admin / intelli123
+  emqx:
+    image: emqx/emqx:5.8
+    container_name: intelli-emqx
+    restart: unless-stopped
+    environment:
+      EMQX_NODE__NAME: emqx@127.0.0.1
+      EMQX_NODE__COOKIE: intelli_home_cookie
+      EMQX_DASHBOARD__DEFAULT_PASSWORD: intelli123
+      TZ: Asia/Shanghai
+    ports:
+      - "127.0.0.1:1883:1883"     # MQTT
+      - "127.0.0.1:8083:8083"     # MQTT over WebSocket
+      - "127.0.0.1:18083:18083"   # Dashboard
+    volumes:
+      - emqx-data:/opt/emqx/data
+      - emqx-log:/opt/emqx/log
+    healthcheck:
+      test: ["CMD", "emqx", "ctl", "status"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  mysql-data:
+  redis-data:
+  rabbitmq-data:
+  emqx-data:
+  emqx-log:

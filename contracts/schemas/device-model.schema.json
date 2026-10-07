@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "properties": {
+    "modelKey": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "properties": {
+      "type": "object"
+    },
+    "actions": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "modelKey",
+    "version",
+    "displayName",
+    "properties",
+    "actions"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

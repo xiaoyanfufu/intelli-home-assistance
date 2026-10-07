@@ -1,0 +1,1789 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Intelli Home local MVP",
+    "version": "1.2.0",
+    "description": "Local-only single household. See home-features.md for limits. YAML uses valid JSON syntax."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8080"
+    }
+  ],
+  "paths": {
+    "/api/devices": {
+      "get": {
+        "summary": "Device catalogue",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        }
+      },
+      "post": {
+        "summary": "Register known model device",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "deviceKey": {
+                    "type": "string"
+                  },
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "modelKey": {
+                    "type": "string"
+                  },
+                  "modelVersion": {
+                    "type": "integer"
+                  },
+                  "source": {
+                    "enum": [
+                      "MOCK",
+                      "MQTT"
+                    ]
+                  },
+                  "location": {
+                    "enum": [
+                      "INDOOR",
+                      "BALCONY"
+                    ]
+                  },
+                  "createdAt": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "deviceKey",
+                  "displayName",
+                  "modelKey",
+                  "modelVersion",
+                  "source",
+                  "location"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/devices/{key}": {
+      "get": {
+        "summary": "Device detail",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/devices/{key}/capabilities": {
+      "get": {
+        "summary": "Versioned capabilities",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/device-models/{key}/versions/{version}": {
+      "get": {
+        "summary": "Device model",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/devices/states": {
+      "get": {
+        "summary": "Current states",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        }
+      }
+    },
+    "/api/alerts": {
+      "get": {
+        "summary": "Alerts",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        }
+      }
+    },
+    "/api/events/snapshot": {
+      "get": {
+        "summary": "Committed baseline and cursor",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        }
+      }
+    },
+    "/api/pages": {
+      "get": {
+        "summary": "Saved pages",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create structured page",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "schemaVersion": {
+                    "const": 1
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "components": {
+                    "type": "array",
+                    "maxItems": 30,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "enum": [
+                            "device-property",
+                            "history-chart",
+                            "alert-list",
+                            "recommendation"
+                          ]
+                        },
+                        "x": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 11
+                        },
+                        "y": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 1000
+                        },
+                        "width": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 12
+                        },
+                        "height": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 1000
+                        },
+                        "binding": {
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "type",
+                        "x",
+                        "y",
+                        "width",
+                        "height",
+                        "binding"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "schemaVersion",
+                  "title",
+                  "components"
+                ],
+                "additionalProperties": false,
+                "$schema": "https://json-schema.org/draft/2020-12/schema"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pages/{id}": {
+      "get": {
+        "summary": "Page",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "put": {
+        "summary": "Replace page",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "schemaVersion": {
+                    "const": 1
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "components": {
+                    "type": "array",
+                    "maxItems": 30,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "enum": [
+                            "device-property",
+                            "history-chart",
+                            "alert-list",
+                            "recommendation"
+                          ]
+                        },
+                        "x": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 11
+                        },
+                        "y": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 1000
+                        },
+                        "width": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 12
+                        },
+                        "height": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 1000
+                        },
+                        "binding": {
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "type",
+                        "x",
+                        "y",
+                        "width",
+                        "height",
+                        "binding"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "schemaVersion",
+                  "title",
+                  "components"
+                ],
+                "additionalProperties": false,
+                "$schema": "https://json-schema.org/draft/2020-12/schema"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Archive page",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/pages/{id}/revisions": {
+      "get": {
+        "summary": "Page revisions",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/rules": {
+      "get": {
+        "summary": "Rule descriptors and active versions",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        }
+      }
+    },
+    "/api/rules/{code}/revisions": {
+      "get": {
+        "summary": "Rule revisions",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/laundry-sessions": {
+      "get": {
+        "summary": "Laundry sessions",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        }
+      },
+      "post": {
+        "summary": "Start balcony laundry",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "deviceKey": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "deviceKey"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/weather/current": {
+      "get": {
+        "summary": "Weather snapshot",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        }
+      }
+    },
+    "/api/commands/{id}": {
+      "get": {
+        "summary": "Command result",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/devices/{key}/commands": {
+      "get": {
+        "summary": "Device commands",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "post": {
+        "summary": "Submit declared mock action",
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string"
+                  },
+                  "parameters": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "action",
+                  "parameters"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/devices/{key}/telemetry": {
+      "get": {
+        "summary": "Raw samples; range [from,to)",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/devices/{key}/history": {
+      "get": {
+        "summary": "Property trend",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "property",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/events/stream": {
+      "get": {
+        "summary": "SSE finite replay; sync.required when stale",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "deviceKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Last-Event-ID",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/pages/{id}/restore": {
+      "post": {
+        "summary": "Restore as new revision",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "revision": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "revision"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rules/{code}/config": {
+      "put": {
+        "summary": "Save rule and refresh active snapshot",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "scene": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "priority": {
+                    "type": "integer"
+                  },
+                  "params": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "code",
+                  "scene",
+                  "enabled",
+                  "priority",
+                  "params"
+                ],
+                "additionalProperties": false,
+                "$schema": "https://json-schema.org/draft/2020-12/schema"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rules/{code}/evaluate": {
+      "post": {
+        "summary": "Side-effect free trial; COLLECT_LAUNDRY uses active/weather/definition",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "sourceEvent": {
+                        "type": "object"
+                      },
+                      "effectiveProperties": {
+                        "type": "object"
+                      },
+                      "definition": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "scene": {
+                            "type": "string"
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "priority": {
+                            "type": "integer"
+                          },
+                          "params": {
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "scene",
+                          "enabled",
+                          "priority",
+                          "params"
+                        ],
+                        "additionalProperties": false,
+                        "$schema": "https://json-schema.org/draft/2020-12/schema"
+                      }
+                    },
+                    "required": [
+                      "sourceEvent",
+                      "effectiveProperties",
+                      "definition"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "active": {
+                        "type": "boolean"
+                      },
+                      "weather": {
+                        "type": "object"
+                      },
+                      "definition": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "scene": {
+                            "type": "string"
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "priority": {
+                            "type": "integer"
+                          },
+                          "params": {
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "scene",
+                          "enabled",
+                          "priority",
+                          "params"
+                        ],
+                        "additionalProperties": false,
+                        "$schema": "https://json-schema.org/draft/2020-12/schema"
+                      }
+                    },
+                    "required": [
+                      "active",
+                      "weather",
+                      "definition"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/laundry-sessions/{id}/complete": {
+      "post": {
+        "summary": "Complete laundry",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/mock/weather": {
+      "post": {
+        "summary": "Mock-mode weather",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/devices/{deviceKey}/recommendation": {
+      "post": {
+        "summary": "On-demand agent advice",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "deviceKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/mock/devices/{deviceKey}/events": {
+      "post": {
+        "summary": "Push mock telemetry",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "deviceKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mock/scenes/{scene}": {
+      "post": {
+        "summary": "Push mock scene",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "409": {
+            "description": "Version or idempotency conflict"
+          },
+          "503": {
+            "description": "Storage unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "scene",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/daily-advice/run": {
+      "post": {
+        "summary": "Generate or deliver today's Agent advice; check response status",
+        "parameters": [
+          {
+            "name": "dryRun",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Execution result; FAILED is also reported in status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status"
+                  ],
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "DRY_RUN",
+                        "SENT",
+                        "SKIPPED_ALREADY_SENT",
+                        "SKIPPED_RUNNING",
+                        "DELIVERY_NOT_CONFIGURED",
+                        "FAILED"
+                      ]
+                    },
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "context": {
+                      "type": "object"
+                    },
+                    "reason": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notifications/email": {
+      "post": {
+        "summary": "Fixed-recipient local email endpoint; disabled by default",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "subject",
+                  "body"
+                ],
+                "properties": {
+                  "subject": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160,
+                    "pattern": "^[^\\r\\n]+$"
+                  },
+                  "body": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  },
+                  "idempotencyKey": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{1,51}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "SENT or SKIPPED_ALREADY_SENT"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "API disabled"
+          },
+          "503": {
+            "description": "Email delivery not configured"
+          },
+          "500": {
+            "description": "Email delivery failed; receipt rolled back"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PageDefinition": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "const": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "components": {
+            "type": "array",
+            "maxItems": 30,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "device-property",
+                    "history-chart",
+                    "alert-list",
+                    "recommendation"
+                  ]
+                },
+                "x": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 11
+                },
+                "y": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 1000
+                },
+                "binding": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "id",
+                "type",
+                "x",
+                "y",
+                "width",
+                "height",
+                "binding"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "title",
+          "components"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "DeviceModel": {
+        "type": "object",
+        "properties": {
+          "modelKey": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "object"
+          },
+          "actions": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "modelKey",
+          "version",
+          "displayName",
+          "properties",
+          "actions"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "RuleDefinition": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "scene": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "params": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "code",
+          "scene",
+          "enabled",
+          "priority",
+          "params"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "ChangeEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "eventKey": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "device.state.changed",
+              "alert.created",
+              "laundry.changed",
+              "command.changed"
+            ]
+          },
+          "deviceKey": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "integer"
+          },
+          "resourceVersion": {
+            "type": "integer"
+          },
+          "payload": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "eventKey",
+          "type",
+          "deviceKey",
+          "occurredAt",
+          "resourceVersion",
+          "payload"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "Command": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "const": 1
+          },
+          "commandId": {
+            "type": "string"
+          },
+          "deviceKey": {
+            "type": "string"
+          },
+          "action": {
+            "const": "setPower"
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "power": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "power"
+            ],
+            "additionalProperties": false
+          },
+          "expiresAt": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "commandId",
+          "deviceKey",
+          "action",
+          "parameters",
+          "expiresAt"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      },
+      "CommandReply": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "const": 1
+          },
+          "commandId": {
+            "type": "string"
+          },
+          "deviceKey": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "occurredAt": {
+            "type": "integer"
+          },
+          "result": {
+            "type": "object"
+          },
+          "properties": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "version",
+          "commandId",
+          "deviceKey",
+          "success",
+          "occurredAt",
+          "result",
+          "properties"
+        ],
+        "additionalProperties": false,
+        "$schema": "https://json-schema.org/draft/2020-12/schema"
+      }
+    }
+  }
+}

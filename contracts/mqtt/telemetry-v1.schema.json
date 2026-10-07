@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Intelli Home MQTT Telemetry v1",
+  "description": "规范发送方契约；主题、字节长度和动态时间校验由接收端处理。当前 Java 尚未直接加载此 Schema。",
+  "type": "object",
+  "required": ["ts"],
+  "anyOf": [
+    {"required": ["messageId"]},
+    {"required": ["seq"]}
+  ],
+  "propertyNames": {"pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,63}$"},
+  "properties": {
+    "ts": {"type": "integer", "minimum": 0, "description": "Unix 毫秒采样时间"},
+    "messageId": {"type": "string", "minLength": 1, "maxLength": 255, "description": "设备内唯一且重投稳定的标识"},
+    "seq": {"type": "integer", "minimum": 0},
+    "temperature": {"type": "number", "description": "摄氏度"},
+    "humidity": {"type": "number", "description": "相对湿度百分数，范围暂不强制"},
+    "smoke": {"type": "number", "description": "模拟读数；硬件单位与标定待确定"}
+  },
+  "additionalProperties": {
+    "oneOf": [
+      {"type": "string", "maxLength": 255},
+      {"type": "number"},
+      {"type": "boolean"}
+    ]
+  }
+}

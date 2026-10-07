@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "commandId": "demo-command-1",
+  "deviceKey": "demo-switch",
+  "success": true,
+  "occurredAt": 1791369999000,
+  "result": {
+    "power": true
+  },
+  "properties": {
+    "power": true
+  }
+}

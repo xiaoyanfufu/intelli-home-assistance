@@ -1,0 +1,25 @@
+# Private notes and local tooling
+docs/
+.archify/
+.local/
+architecture/*.delivery.json
+pip-*/
+acl-backup-*.json
+acl-backup-*.ps1
+acl-report-*.jsonl
+
+# Local configuration and runtime data
+.env
+.env.*
+!.env.example
+infra/data/
+infra/logs/
+*.log
+*.bak
+
+# Editor and operating system
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

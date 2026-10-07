@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "commandId": {
+      "type": "string"
+    },
+    "deviceKey": {
+      "type": "string"
+    },
+    "action": {
+      "const": "setPower"
+    },
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "power": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "power"
+      ],
+      "additionalProperties": false
+    },
+    "expiresAt": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "version",
+    "commandId",
+    "deviceKey",
+    "action",
+    "parameters",
+    "expiresAt"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

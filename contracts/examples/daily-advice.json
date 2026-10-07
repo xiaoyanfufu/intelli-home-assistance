@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "requestId": "daily-advice:2026-10-08",
+  "date": "2026-10-08",
+  "windowHours": 24,
+  "states": {"INDOOR": {"temperature": 26.5, "humidity": 48}},
+  "history": [{
+    "deviceKey": "indoor-node-01", "location": "INDOOR",
+    "from": 1791388800000, "to": 1791475200000,
+    "coveredFrom": 1791388800000, "coveredTo": 1791475199000,
+    "sampleCount": 2, "truncated": false,
+    "properties": {"temperature": {"min": 24, "max": 29, "avg": 26.5, "last": 29, "count": 2}}
+  }],
+  "alertSummary": {"total": 0, "byLevel": {}, "items": [], "truncated": false},
+  "coverage": {"devicesTruncated": false, "totalDevices": 1, "includedDevices": 1}
+}

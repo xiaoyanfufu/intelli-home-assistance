@@ -1,0 +1,73 @@
+{
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "components": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "device-property",
+              "history-chart",
+              "alert-list",
+              "recommendation"
+            ]
+          },
+          "x": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 11
+          },
+          "y": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "binding": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "x",
+          "y",
+          "width",
+          "height",
+          "binding"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "title",
+    "components"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

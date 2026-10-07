@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "commandId": "demo-command-1",
+  "deviceKey": "demo-switch",
+  "action": "setPower",
+  "parameters": {
+    "power": true
+  },
+  "expiresAt": 1791370000000
+}

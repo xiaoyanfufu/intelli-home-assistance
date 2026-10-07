@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "scene": {
+      "type": "string"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "priority": {
+      "type": "integer"
+    },
+    "params": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "code",
+    "scene",
+    "enabled",
+    "priority",
+    "params"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

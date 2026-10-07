@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "commandId": {
+      "type": "string"
+    },
+    "deviceKey": {
+      "type": "string"
+    },
+    "success": {
+      "type": "boolean"
+    },
+    "occurredAt": {
+      "type": "integer"
+    },
+    "result": {
+      "type": "object"
+    },
+    "properties": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "version",
+    "commandId",
+    "deviceKey",
+    "success",
+    "occurredAt",
+    "result",
+    "properties"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

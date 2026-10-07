@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "eventKey": {
+      "type": "string"
+    },
+    "type": {
+      "enum": [
+        "device.state.changed",
+        "alert.created",
+        "laundry.changed",
+        "command.changed"
+      ]
+    },
+    "deviceKey": {
+      "type": "string"
+    },
+    "occurredAt": {
+      "type": "integer"
+    },
+    "resourceVersion": {
+      "type": "integer"
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "id",
+    "eventKey",
+    "type",
+    "deviceKey",
+    "occurredAt",
+    "resourceVersion",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
